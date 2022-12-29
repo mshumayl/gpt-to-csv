@@ -7,6 +7,8 @@ function AIResponse() {
   const [data, setData] = useState(null);
   const [buttonClicked, setButtonClicked] = useState(false);
 
+  const [request, setRequest] = useState('');
+  const [columns, setColumns] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -17,10 +19,7 @@ function AIResponse() {
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
       });
 
-
-      const userReq = "country GDP per capita"
-      const userCols = "country, GDP per capita"
-      const prompt = `Give me an accurate data of ${userReq} with the following columns: ${userCols}. Please return the data in the form of array of arrays. If you do not have high-confidence, high-accuracy data, please return null.`
+      const prompt = `Give me an accurate data of ${request} with the following columns: ${columns}. Please return the data in the form of array of arrays.`
 
       const openai = new OpenAIApi(configuration);
       
@@ -43,16 +42,29 @@ function AIResponse() {
     if (buttonClicked) {
       fetchData();
     }
+
   }, [buttonClicked]);
 
   function handleButtonClick() {
+    const reqElement = document.getElementById('user-request') as HTMLInputElement;
+    const colsElement = document.getElementById('user-columns') as HTMLInputElement;
+
+    const reqValue = reqElement?.value;
+    const colsValue = colsElement?.value;
+
+    setRequest(reqValue);
+    setColumns(colsValue);
+
     setButtonClicked(true);
   }
 
   return (
     <div>
-      <label htmlFor="prompt-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Prompt:
-        <input type="text" id="prompt-input" className="block w-full p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+      <label htmlFor="user-request" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">What data do you need? (e.g. countries with top GDP)
+        <input type="text" id="user-request" defaultValue={request} className="block w-full mt-2 p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+      </label>
+      <label htmlFor="user-columns" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Specify your columns, comma-separated (e.g. country, GDP, top export).
+        <input type="text" id="user-columns" defaultValue={columns} className="block w-full mt-2 p-4 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
       </label>
       <button onClick={handleButtonClick} className="btn btn-primary">Submit</button>
       <div className="block mb-2 mt-4 text-sm font-medium text-gray-900 dark:text-white">Response:</div>
