@@ -17,14 +17,17 @@ function AIResponse() {
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
       });
 
-      const prompt = "A two-column spreadsheet of top science fiction movies and the year of release:\n\nTitle |  Year of release"
+
+      const userReq = "country GDP per capita"
+      const userCols = "country, GDP per capita"
+      const prompt = `Give me an accurate data of ${userReq} with the following columns: ${userCols}. Please return the data in the form of array of arrays. If you do not have high-confidence, high-accuracy data, please return null.`
 
       const openai = new OpenAIApi(configuration);
       
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 0.5,
+        temperature: 0,
         max_tokens: 60,
         top_p: 1.0,
         frequency_penalty: 0.0,
@@ -32,7 +35,8 @@ function AIResponse() {
       });
 
       const json = await response.data;
-      const text = json.choices[0].text;
+      const text = json.choices[0].text.replace(/[\n\r]/g, '');
+
       setData(text);
     }
 
@@ -52,12 +56,18 @@ function AIResponse() {
       </label>
       <button onClick={handleButtonClick} className="btn btn-primary">Submit</button>
       <div className="block mb-2 mt-4 text-sm font-medium text-gray-900 dark:text-white">Response:</div>
-      <div>
-        {!buttonClicked && data ? (
-          <pre>{JSON.stringify(data, null, 2)}</pre>
-        ) : (
-          'Loading...'
-        )}
+      <div className="border">
+        <div className="m-2">
+          {data ? (
+            <pre>{JSON.stringify(data, null, 2)}</pre>
+          ) : (
+            buttonClicked ? (
+              "Loading..."
+            ) : (
+              ""
+            )
+          )}
+        </div>
       </div>
     </div>
   );
