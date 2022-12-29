@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { CSVLink, CSVDownload } from 'react-csv';
 import logo from './logo.svg';
 import './App.css';
 
@@ -35,7 +36,8 @@ function AIResponse() {
 
       const json = await response.data;
       const text = json.choices[0].text.replace(/[\n\r]/g, '');
-
+      // const parsedText = JSON.parse(text)
+      
       setData(text);
     }
 
@@ -78,6 +80,11 @@ function AIResponse() {
             ) : (
               ""
             )
+          )}
+          {data ? (
+            <CSVLink data={data}>Download</CSVLink>
+          ) : (
+            ""
           )}
         </div>
       </div>
