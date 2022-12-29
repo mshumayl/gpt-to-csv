@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CSVLink, CSVDownload } from 'react-csv';
-import logo from './logo.svg';
+import { CSVLink } from 'react-csv';
 import './App.css';
 
 
@@ -20,7 +19,7 @@ function AIResponse() {
         apiKey: process.env.REACT_APP_OPENAI_API_KEY,
       });
 
-      const prompt = `Give me an accurate data of ${request} with the following columns: ${columns}. Please return the data in the form of array of arrays.`
+      const prompt = `Give me an accurate data of ${request} with the following columns: ${columns}. Please return only the top 2 items, and make sure the data in the form of array of arrays. Make the first element the columns. Most importantly, make sure it is a valid JSON string.`
 
       const openai = new OpenAIApi(configuration);
       
@@ -36,9 +35,12 @@ function AIResponse() {
 
       const json = await response.data;
       const text = json.choices[0].text.replace(/[\n\r]/g, '');
-      // const parsedText = JSON.parse(text)
+
+      console.log(text)
+
+      const parsedText = JSON.parse(text)
       
-      setData(text);
+      setData(parsedText);
     }
 
     if (buttonClicked) {
@@ -81,6 +83,9 @@ function AIResponse() {
               ""
             )
           )}
+          
+        </div>
+        <div>
           {data ? (
             <CSVLink data={data}>Download</CSVLink>
           ) : (
