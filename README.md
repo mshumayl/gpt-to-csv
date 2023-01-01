@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Dependencies
+1. NodeJS
+2. npm
+
 ## OpenAI API
 
 This app uses OpenAI's GPT-3 Large Language Model (`text-davinci-003`).
